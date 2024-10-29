@@ -4,25 +4,49 @@
         <img :src="getFlagUrl(weatherData.sys.country)" alt="Flag" class="country-flag" />
       </h2>
       <div class="weather-details">
+        <p>
+            <strong>Condition:</strong> {{ weatherData.weather[0].description }}
+            <img :src="getWeatherIcon(weatherData.weather[0].icon)" alt="Weather Icon" class="weather-icon" />
+          </p>          
+
         <p><strong>Temperature:</strong> {{ (weatherData.main.temp).toFixed(1) }} °C</p>
+        <p><strong>Feels Like:</strong> {{ (weatherData.main.feels_like).toFixed(1) }} °C</p>
         <p><strong>Condition:</strong> {{ weatherData.weather[0].description }}</p>
         <p><strong>Humidity:</strong> {{ weatherData.main.humidity }} %</p>
         <p><strong>Pressure:</strong> {{ weatherData.main.pressure }} hPa</p>
         <p><strong>Wind Speed:</strong> {{ weatherData.wind.speed }} m/s</p>
+        <p><strong>Wind Direction:</strong> {{ getWindDirection(weatherData.wind.deg) }}</p>
+        <p><strong>Visibility:</strong> {{ (weatherData.visibility / 1000).toFixed(1) }} km</p>
+        <p><strong>Cloudiness:</strong> {{ weatherData.clouds.all }} %</p>
+        <p><strong>Sunrise:</strong> {{ formatTime(weatherData.sys.sunrise) }}</p>
+        <p><strong>Sunset:</strong> {{ formatTime(weatherData.sys.sunset) }}</p>
+        <p v-if="weatherData.rain"><strong>Rain:</strong> {{ weatherData.rain['1h'] || weatherData.rain['3h'] }} mm/h</p>
+        <p v-if="weatherData.snow"><strong>Snow:</strong> {{ weatherData.snow['1h'] || weatherData.snow['3h'] }} mm/h</p>
+        <p v-if="uvIndex"><strong>UV Index:</strong> {{ uvIndex }}</p>
       </div>
     </div>
   
     <div v-else class="no-data">
       <p>No weather data available. Please search for a city.</p>
     </div>
-  </template>
-  
-  
-
+</template>
 <script>
 export default {
     props: ['weatherData'],
     methods: {
+        getWeatherIcon(iconCode) {
+      // Assuming you are using OpenWeatherMap API, this URL works for their icons.
+      return `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
+    },
+    getWindDirection(degrees) {
+      const directions = ['North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West'];
+      const index = Math.round(degrees / 45) % 8;
+      return directions[index];
+    },
+    formatTime(unixTime) {
+      const date = new Date(unixTime * 1000); // Convert from UNIX timestamp to milliseconds
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    },
     getCountryName(countryCode) {
       const countryNames = {
         "AF": "Afghanistan",
@@ -319,7 +343,11 @@ export default {
         color: #555555;
         margin: 8px 0;
       }
-      
+      .weather-icon {
+        width: 60px; /* or any size that fits your design */
+        height: auto; /* maintain aspect ratio */
+        vertical-align: middle; /* align with the text if needed */
+      }
       .weather-details p strong {
         color: #2c3e50; /* Darker color for labels */
       }
