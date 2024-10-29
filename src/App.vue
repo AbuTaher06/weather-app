@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="app-container">
-    <h1>Weather App</h1>
+    <h1 >Weather App</h1>
     <WeatherForm @get-weather="getWeather"/>
     <WeatherDisplay :weatherData="weatherData" v-if="weatherData"/>
   </div>
@@ -306,7 +306,7 @@ export default {
 /* Main header */
 h1 {
   font-size: 2.5rem;
-  color: #333;
+  color:purple;
   margin-bottom: 20px;
 }
 

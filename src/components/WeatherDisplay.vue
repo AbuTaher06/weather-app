@@ -1,6 +1,8 @@
 <template>
     <div v-if="weatherData" class="weather-display">
-      <h2>{{ weatherData.name }}, {{ getCountryName(weatherData.sys.country) }}</h2>
+      <h2>{{ weatherData.name }}, {{ getCountryName(weatherData.sys.country) }}
+        <img :src="getFlagUrl(weatherData.sys.country)" alt="Flag" class="country-flag" />
+      </h2>
       <div class="weather-details">
         <p><strong>Temperature:</strong> {{ (weatherData.main.temp).toFixed(1) }} °C</p>
         <p><strong>Condition:</strong> {{ weatherData.weather[0].description }}</p>
@@ -273,6 +275,9 @@ export default {
       
       };
       return countryNames[countryCode] || countryCode;
+    },
+    getFlagUrl(countryCode) {
+      return `https://flagcdn.com/16x12/${countryCode.toLowerCase()}.png`;
     }
   }
 };
@@ -299,6 +304,15 @@ export default {
         padding-bottom: 5px;
       }
       
+      .country-flag {
+        widows: 30px;
+        height: 20px;
+        vertical-align: middle;
+        margin-left: 5px;
+        border:1px solid #ccc;
+        border-radius: 3px;
+       
+      }
       /* Details section styling */
       .weather-details p {
         font-size: 1.1rem;
