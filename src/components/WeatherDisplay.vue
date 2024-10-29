@@ -1,25 +1,28 @@
 <template>
-  <div id="app" class="app-container">
-    <h1>Weather App</h1>
-    <WeatherForm @get-weather="getWeather"/>
-    <WeatherDisplay :weatherData="weatherData" v-if="weatherData"/>
-  </div>
-</template>
+    <div v-if="weatherData" class="weather-display">
+      <h2>{{ weatherData.name }}, {{ getCountryName(weatherData.sys.country) }}</h2>
+      <div class="weather-details">
+        <p><strong>Temperature:</strong> {{ (weatherData.main.temp).toFixed(1) }} °C</p>
+        <p><strong>Condition:</strong> {{ weatherData.weather[0].description }}</p>
+        <p><strong>Humidity:</strong> {{ weatherData.main.humidity }} %</p>
+        <p><strong>Pressure:</strong> {{ weatherData.main.pressure }} hPa</p>
+        <p><strong>Wind Speed:</strong> {{ weatherData.wind.speed }} m/s</p>
+      </div>
+    </div>
+  
+    <div v-else class="no-data">
+      <p>No weather data available. Please search for a city.</p>
+    </div>
+  </template>
+  
+  
 
 <script>
-import WeatherForm from './components/WeatherForm.vue';
-import WeatherDisplay from './components/WeatherDisplay.vue';
-import axios from 'axios';
 export default {
-  name: 'App',
-  components: {
-    WeatherForm,
-    WeatherDisplay
-  },
-  data() {
-    return {
-      weatherData: null,
-      countryNames: {
+    props: ['weatherData'],
+    methods: {
+    getCountryName(countryCode) {
+      const countryNames = {
         "AF": "Afghanistan",
         "AL": "Albania",
         "DZ": "Algeria",
@@ -267,49 +270,52 @@ export default {
         "ZM": "Zambia",
         "ZW": "Zimbabwe"
 
-      }
-    };
-  },
-  methods: {
-    async getWeather(city) {
-      const apiKey= '441ecdc4767db56f7ca9dca2dbf49294';
-      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
-
-      try {
-        const response = await axios.get(apiUrl);
-        this.weatherData = response.data;
-      } catch (error) {
-        console.error("Error fetching weather data:", error);
-        alert('Error fetching weather data. Please try again.');
-      }
       
+      };
+      return countryNames[countryCode] || countryCode;
     }
   }
-}
-</script>
-
-<style>
-#app {
-  margin-top: 60px;
-}
-.app-container {
-  background-color: #f0f8ff; /* Light blue background */
-  padding: 40px;
-  border-radius: 15px;
-  max-width: 600px;
-  margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  font-family: 'Arial', sans-serif;
-}
-
-/* Main header */
-h1 {
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-</style>
-  
-
+};
+    </script>
+    
+    <style scoped>
+    .weather-display {
+        background-color: #ffffff; /* White background */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        margin: 20px auto;
+        max-width: 400px;
+        text-align: left;
+        font-family: 'Arial', sans-serif;
+      }
+      
+      /* Heading style for city and country */
+      .weather-display h2 {
+        color: #2c3e50;
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #3498db; /* Light blue border */
+        padding-bottom: 5px;
+      }
+      
+      /* Details section styling */
+      .weather-details p {
+        font-size: 1.1rem;
+        color: #555555;
+        margin: 8px 0;
+      }
+      
+      .weather-details p strong {
+        color: #2c3e50; /* Darker color for labels */
+      }
+      
+      /* No data message styling */
+      .no-data {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #e74c3c; /* Red color for the alert */
+        margin-top: 20px;
+        font-weight: bold;
+      }
+    </style>
