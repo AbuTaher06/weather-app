@@ -280,7 +280,7 @@ export default {
         this.weatherData = response.data;
       } catch (error) {
         console.error("Error fetching weather data:", error);
-        alert('Error fetching weather data. Please try again.');
+        alert('Error fetching weather data. Please enter a valid city name.');
       }
       
     }
